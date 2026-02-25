@@ -163,7 +163,6 @@
             <div class="section-title">📅 选择日期查看每日资讯</div>
             <div class="selector-grid" id="daily-selector">
                 <!-- Daily items will be auto-generated -->
-                <a href="/daily/2026-02-25.html" class="selector-item today">2月24日<br><small>今天</small></a>
             </div>
         </div>
 
@@ -171,7 +170,6 @@
             <div class="section-title">🔥 选择周次查看热点汇总</div>
             <div class="selector-grid" id="weekly-selector">
                 <!-- Weekly items will be auto-generated -->
-                <a href="/weekly/2026-week08.html" class="selector-item this-week">第8周<br><small>本周</small></a>
             </div>
         </div>
 
@@ -183,11 +181,17 @@
     </div>
 
     <script>
-        // Auto-generate date selectors for last 30 days
-        const dailySelector = document.getElementById('daily-selector');
-        const today = new Date('2026-02-24');
+        // Start date: 2026-02-24 (only show dates from this date onwards)
+        const START_DATE = new Date('2026-02-24');
         
-        for (let i = 1; i <= 30; i++) {
+        // Auto-generate date selectors from start date to today
+        const dailySelector = document.getElementById('daily-selector');
+        const today = new Date('2026-02-25'); // Current date
+        
+        // Calculate days between start date and today
+        const daysDiff = Math.floor((today - START_DATE) / (1000 * 60 * 60 * 24));
+        
+        for (let i = 0; i <= daysDiff; i++) {
             const date = new Date(today);
             date.setDate(date.getDate() - i);
             
@@ -200,29 +204,25 @@
             
             const link = document.createElement('a');
             link.href = `/daily/${dateStr}.html`;
-            link.className = 'selector-item';
-            link.innerHTML = `${displayMonth}月${displayDay}日`;
+            link.className = 'selector-item' + (i === 0 ? ' today' : '');
+            link.innerHTML = `${displayMonth}月${displayDay}日${i === 0 ? '<br><small>今天</small>' : ''}`;
             dailySelector.appendChild(link);
         }
 
-        // Auto-generate week selectors for last 12 weeks
+        // Auto-generate week selectors from start week to current week
         const weeklySelector = document.getElementById('weekly-selector');
+        const startWeek = 8; // Week 8 is the week of 2026-02-24
         const currentWeek = 8;
         const currentYear = 2026;
         
-        for (let i = 1; i <= 12; i++) {
-            let week = currentWeek - i;
-            let year = currentYear;
-            
-            if (week <= 0) {
-                week = 52 + week;
-                year = currentYear - 1;
-            }
+        for (let i = 0; i <= (currentWeek - startWeek); i++) {
+            const week = currentWeek - i;
+            const year = currentYear;
             
             const link = document.createElement('a');
             link.href = `/weekly/${year}-week${String(week).padStart(2, '0')}.html`;
-            link.className = 'selector-item';
-            link.innerHTML = `第${week}周<br><small>${year}年</small>`;
+            link.className = 'selector-item' + (i === 0 ? ' this-week' : '');
+            link.innerHTML = `第${week}周<br><small>${i === 0 ? '本周' : year + '年'}</small>`;
             weeklySelector.appendChild(link);
         }
     </script>
